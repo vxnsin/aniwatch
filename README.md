@@ -39,13 +39,12 @@ ssh pi@<pi-ip>
 bash ~/aniwatch/scripts/setup-pi.sh
 ```
 
-Das Script installiert nichts doppelt, legt `/etc/aniwatch.env` an, baut, richtet den systemd-Dienst `aniwatch` ein, hängt einen Caddy-Block für `aniwatch.vensin.dev` an (ohne den vensin.dev-Block anzufassen) und legt den A-Record bei Vercel per Cron an. Danach `/etc/aniwatch.env` ausfüllen und das Script nochmal laufen lassen. Re-Runs machen Pull, Build und Restart.
+Das Script fragt beim Start nach Repo, Domain, Ordner, Port, Dienstname und DNS und schlägt Standardwerte vor (Enter übernimmt). Mit `--yes` oder Umgebungsvariablen läuft es ohne Fragen, etwa `DOMAIN=watch.example.org bash scripts/setup-pi.sh --yes`. Es installiert nichts doppelt, legt `/etc/aniwatch.env` an, baut, richtet den systemd-Dienst `aniwatch` ein, hängt einen Caddy-Block für `aniwatch.vensin.dev` an (ohne den vensin.dev-Block anzufassen) und legt den A-Record bei Vercel per Cron an. Danach `/etc/aniwatch.env` ausfüllen und das Script nochmal laufen lassen. Re-Runs machen Pull, Build und Restart.
 
-Andere Subdomain: `DOMAIN=watch.vensin.dev bash scripts/setup-pi.sh`.
 
 ## Als Discord Activity einrichten
 
-1. **App anlegen:** https://discord.com/developers/applications → „New Application“.
+1. **App anlegen:** https://discord.com/developers/applications → „New Application“. Als App-Icon liegt `.github/logo.png` (1024 px) bereit.
 2. **OAuth2:** Client ID und Client Secret kopieren → in `.env` eintragen (`DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `VITE_DISCORD_CLIENT_ID`). Eine Redirect-URL ist für Activities nicht nötig.
 3. **Activities aktivieren:** Reiter „Activities“ → „Enable Activities“.
 4. **URL Mapping:** unter Activities → „URL Mappings“ den Root `/` auf deine öffentliche Adresse zeigen lassen, z. B. `aniwatch.vensin.dev`. Discord lädt die App über seinen eigenen Proxy, deshalb muss der Server **öffentlich per HTTPS** erreichbar sein. Es werden keine weiteren Mappings gebraucht, alles (Streams, Bilder, Fonts) läuft über unseren Server.
