@@ -210,7 +210,12 @@ function fail(reason) {
 
 /** target position right now according to the server */
 let needsUnmute = false;
-const onPlaying = () => { unlocked = true; $('unlock').classList.add('hidden'); };
+let autoMuted = false; // we muted to get past the autoplay policy, the user did not
+const onPlaying = () => {
+  unlocked = true;
+  $('unlock').classList.add('hidden');
+  if (autoMuted && video()?.muted) { needsUnmute = true; showUnmuteHint(); }
+};
 /** play(), surviving the two things that go wrong in an embedded frame:
  *  AbortError (a pause/seek interrupted the start) → try again shortly,
  *  NotAllowedError (no sound without a click) → play muted, unmute on the next click */
@@ -222,7 +227,8 @@ function startPlay(v, attempt = 0) {
     }
     if (err?.name === 'NotAllowedError' && !v.muted) {
       v.muted = true;
-      v.play().then(() => { onPlaying(); needsUnmute = true; showUnmuteHint(); }).catch(() => $('unlock').classList.remove('hidden'));
+      autoMuted = true;
+      v.play().then(onPlaying).catch((e2) => { if (e2?.name === 'AbortError' && attempt < 3) return setTimeout(() => { if (R?.playback?.playing && v.paused) startPlay(v, attempt + 1); }, 400); $('unlock').classList.remove('hidden'); });
       return;
     }
     report('play', `${err?.name}: ${err?.message}`);
@@ -237,8 +243,42 @@ function unmute() {
   const v = video();
   v.muted = false;
   needsUnmute = false;
+  autoMuted = false;
   showUnmuteHint();
   renderControls();
+}
+
+/** the one entry point for play/pause from buttons, space and clicks */
+function userToggle() {
+  const v = video();
+  if (!R?.current) return;
+  if (!ready) { toast('lädt noch …', 1500); return; }
+  const localPlaying = !v.paused;
+  // the room is running and only this screen is stuck: start locally, don't pause everyone
+  if (!localPlaying && R.playback.playing) { startPlay(v); return; }
+  if (!canControl()) { showOverlay(); toast('nur der host steuert', 1500); return; }
+  send({ type: localPlaying ? 'pause' : 'play' });
+}
+const isLocallyPlaying = () => (ready && video() && !video().paused) || (!ready && !!R?.playback?.playing);
+function updateToggleIcon() {
+  const b = document.querySelector('#controls [data-act="toggle"]');
+  if (b) b.innerHTML = icon(isLocallyPlaying() ? 'pause' : 'play', 'lg');
+}
+
+let endedSentFor = null;
+let lastEndCheck = { t: -1, n: 0 };
+function sendEnded() {
+  if (!isHost() || !currentKey || endedSentFor === currentKey) return;
+  endedSentFor = currentKey;
+  send({ type: 'ended' });
+}
+/** hls streams often miss the last few ms in the buffer: the video sits at 25:59.9 and "ended" never comes */
+function checkStalledEnd(v) {
+  const left = (v.duration || 0) - v.currentTime;
+  if (!v.duration || left > 1.5 || v.paused) { lastEndCheck = { t: -1, n: 0 }; return; }
+  if (Math.abs(v.currentTime - lastEndCheck.t) < 0.05) lastEndCheck.n++;
+  else lastEndCheck = { t: v.currentTime, n: 0 };
+  if (lastEndCheck.n >= 1) sendEnded(); // two checks (2 s) without movement in the last 1.5 s
 }
 
 function expected(pb) {
@@ -272,7 +312,7 @@ setInterval(() => {
   }
   if (pb.playing && v.paused && unlocked) v.play().catch(() => {});
   if (!pb.playing && !v.paused) v.pause();
-  if (isHost()) send({ type: 'report', position: v.currentTime, duration: v.duration || 0 });
+  if (isHost()) { send({ type: 'report', position: v.currentTime, duration: v.duration || 0 }); checkStalledEnd(v); }
   renderTimes();
 }, 2000);
 
@@ -287,8 +327,12 @@ function showOverlay() { const o = $('overlay'); if (!o) return; o.classList.rem
 
 function bindVideo() {
   const v = video();
-  v.addEventListener('ended', () => { if (isHost()) send({ type: 'ended' }); });
+  v.addEventListener('ended', () => sendEnded());
   v.addEventListener('timeupdate', renderTimes);
+  v.addEventListener('playing', () => { updateToggleIcon(); pokeControls(); });
+  v.addEventListener('pause', () => { updateToggleIcon(); showControls(); });
+  $('stage').addEventListener('mousemove', () => pokeControls());
+  $('stage').addEventListener('touchstart', () => pokeControls(), { passive: true });
   // a host pausing via keyboard/media keys should pause everyone
   v.addEventListener('pause', () => { if (suppressEvents || !ready || v.ended || leaving || document.visibilityState === 'hidden') return; if (isHost() && R.playback.playing && Math.abs(v.currentTime - (v.duration || 0)) > 1) send({ type: 'pause' }); });
   v.addEventListener('play', () => { if (suppressEvents || !ready || leaving) return; if (isHost() && !R.playback.playing) send({ type: 'play' }); });
@@ -297,14 +341,14 @@ function bindVideo() {
     const v = video();
     if (needsUnmute) { unmute(); return; }
     if (!unlocked) { unlocked = true; $('unlock').classList.add('hidden'); applyPlayback(R.playback, true); return; }
-    // still starting up: a click means "go", not "pause for everyone"
-    if (R?.playback?.playing && v.paused) { startPlay(v); return; }
-    if (canControl()) send({ type: 'toggle' }); else showOverlay();
+    // fullscreen with the bar tucked away: the first tap only brings the bar back
+    if ($('stage').classList.contains('controls-hidden')) { pokeControls(); return; }
+    userToggle();
   });
   $('screen').addEventListener('dblclick', toggleFullscreen);
   document.addEventListener('keydown', (e) => {
     if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
-    if (e.key === ' ' || e.key === 'k') { e.preventDefault(); if (canControl()) send({ type: 'toggle' }); }
+    if (e.key === ' ' || e.key === 'k') { e.preventDefault(); userToggle(); pokeControls(); }
     if (e.key === 'ArrowRight' && canControl()) send({ type: 'seek', delta: 10 });
     if (e.key === 'ArrowLeft' && canControl()) send({ type: 'seek', delta: -10 });
     if (e.key === 'f') toggleFullscreen();
@@ -312,17 +356,59 @@ function bindVideo() {
     if (e.key === 'm') { v.muted = !v.muted; renderControls(); }
   });
 }
+let hideTimer = null;
+const isImmersive = () => $('stage')?.classList.contains('immersive');
+function showControls() {
+  const st = $('stage'); if (!st) return;
+  st.classList.remove('controls-hidden');
+  clearTimeout(hideTimer);
+}
+function hideControls() {
+  const st = $('stage'); if (!st || !isImmersive()) return;
+  clearTimeout(hideTimer);
+  st.classList.add('controls-hidden');
+}
+/** bar comes out on movement/taps and slides away again after 3 s while the video runs */
+function pokeControls() {
+  if (!isImmersive()) return;
+  showControls();
+  hideTimer = setTimeout(() => { const v = video(); if (isImmersive() && v && !v.paused) hideControls(); }, 3000);
+}
+function setImmersive(on) {
+  const st = $('stage'); if (!st) return;
+  st.classList.toggle('immersive', on);
+  if (on) pokeControls(); else showControls();
+}
 function setTheater(on) {
   document.body.classList.toggle('theater', on);
+  setImmersive(on || !!document.fullscreenElement);
   renderControls();
 }
+document.addEventListener('fullscreenchange', () => {
+  setImmersive(!!document.fullscreenElement || document.body.classList.contains('theater'));
+  renderControls();
+});
+const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 function toggleFullscreen() {
   if (document.fullscreenElement) { document.exitFullscreen?.(); return; }
   if (document.body.classList.contains('theater')) { setTheater(false); return; }
-  const el = $('stage');
-  const fallback = () => { setTheater(true); toast('kino-modus · esc zum beenden. für mehr platz das activity-fenster in discord ausklappen', 5000); };
-  if (document.fullscreenEnabled && el.requestFullscreen) el.requestFullscreen().catch(fallback);
-  else fallback();
+  const el = $('stage'), v = video();
+  // discord's desktop frame refuses the fullscreen api: fill the whole activity instead, discord's own
+  // fullscreen button (voice channel, bottom right) then makes that the whole screen
+  const fallback = () => {
+    setTheater(true);
+    if (!localStorage.getItem('aniwatch:fs-hint')) {
+      toast('vollbild in der app ist an · für den ganzen bildschirm zusätzlich in discord unten rechts auf vollbild', 6000);
+      try { localStorage.setItem('aniwatch:fs-hint', '1'); } catch {}
+    }
+  };
+  if (isIOS && v?.webkitEnterFullscreen && !v.classList.contains('hidden')) { try { v.webkitEnterFullscreen(); return; } catch {} }
+  if (!document.fullscreenEnabled || !el.requestFullscreen) return fallback();
+  // some frames neither grant nor refuse the request: give it 700 ms, then fill the frame instead
+  let settled = false;
+  const giveUp = () => { if (settled) return; settled = true; if (!document.fullscreenElement) fallback(); };
+  el.requestFullscreen({ navigationUI: 'hide' }).then(() => { settled = true; }, giveUp);
+  setTimeout(giveUp, 700);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -422,17 +508,18 @@ function renderControls() {
     <div class="progress clickable" id="seekbar"><i id="seekfill" style="width:0%"></i></div>
     <div class="times"><span id="t-cur">0:00</span><span class="truncate np" style="text-align:center">${esc(c.anime.title)} · ${esc(epLabel(c.episode))} · ${esc(c.episode.title)}</span><span id="t-dur">${pb.duration ? fmt(pb.duration) : '–:––'}</span></div>
     <div class="bar">
-      ${ctl ? `<button class="btn primary" data-act="toggle" title="play/pause">${icon(pb.playing ? 'pause' : 'play', 'lg')}</button>
+      ${ctl ? `<button class="btn primary" data-act="toggle" title="play/pause">${icon(isLocallyPlaying() ? 'pause' : 'play', 'lg')}</button>
       <button class="btn icon" data-act="seek" data-v="-30" title="-30s">${icon('rew')}</button>
       <button class="btn icon" data-act="seek" data-v="-10" title="-10s">-10</button>
       <button class="btn icon" data-act="seek" data-v="10" title="+10s">+10</button>
       <button class="btn icon" data-act="seek" data-v="30" title="+30s">${icon('fwd')}</button>
       <button class="btn icon" data-act="next" title="nächste folge">${icon('next')}</button>
-      <button class="btn icon" data-act="stop" title="stop">${icon('stop')}</button>` : `<span class="chip">${icon(pb.playing ? 'play' : 'pause')} ${pb.playing ? 'läuft' : 'pause'}</span>`}
+      <button class="btn icon" data-act="stop" title="stop">${icon('stop')}</button>` : `<span class="chip">${icon(pb.playing ? 'play' : 'pause')} ${pb.playing ? 'läuft' : 'pause'}</span><button class="btn primary" data-act="toggle" title="bei mir starten">${icon(isLocallyPlaying() ? 'pause' : 'play', 'lg')}</button>`}
       <span class="spacer"></span>
       <span class="vol"><button class="btn icon" data-act="mute">${icon(video()?.muted ? 'mute' : 'volume')}</button><input type="range" id="vol" min="0" max="100" value="${Math.round(volume * 100)}"></span>
       <button class="btn icon" data-act="resync" title="neu synchronisieren">${icon('sync')}</button>
-      <button class="btn icon" data-act="fs" title="vollbild">${icon('fullscreen')}</button>
+      <button class="btn icon" data-act="fs" title="vollbild (f)">${icon('fullscreen')}</button>
+      <button class="btn icon bar-hide" data-act="hidebar" title="leiste einfahren">${icon('down')}</button>
     </div>
     <div class="bar">
       <span class="xs muted">sprache</span>${langs.map((l) => `<button class="chip ${l === c.stream?.langKey ? 'active' : ''}" data-act="lang" data-v="${l}" ${ctl ? '' : 'disabled'}>${LANG[l] || l}</button>`).join('')}
@@ -454,7 +541,8 @@ function onControlClick(e) {
   const b = e.target.closest('[data-act]'); if (!b) return;
   const v = video();
   switch (b.dataset.act) {
-    case 'toggle': send({ type: 'toggle' }); break;
+    case 'toggle': userToggle(); break;
+    case 'hidebar': hideControls(); break;
     case 'seek': send({ type: 'seek', delta: parseInt(b.dataset.v, 10) }); break;
     case 'next': send({ type: 'next' }); break;
     case 'stop': if (confirm('wiedergabe für alle stoppen?')) send({ type: 'stop' }); break;

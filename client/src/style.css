@@ -251,3 +251,30 @@ body.theater .topbar, body.theater .side { display: none !important; }
 body.theater .layout { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
 body.theater .stage { border-width: 0; }
 .screen .unmute { position: absolute; right: 12px; top: 12px; z-index: 5; }
+
+/* immersive (real fullscreen or the frame-filling mode): the picture gets everything, the bar floats and slides away */
+.bar-hide { display: none; }
+.stage.immersive .win-body { position: relative; }
+.stage.immersive .screen { position: absolute; inset: 0; }
+.stage.immersive .controls {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 6;
+  border-top: 0; background: linear-gradient(to top, rgba(23, 18, 28, 0.96) 55%, rgba(23, 18, 28, 0));
+  padding-top: 26px; transition: transform 0.25s ease, opacity 0.25s ease;
+}
+.stage.immersive .bar-hide { display: inline-flex; }
+.stage.immersive.controls-hidden .controls { transform: translateY(100%); opacity: 0; pointer-events: none; }
+.stage.immersive.controls-hidden .overlay { opacity: 0; }
+.stage.immersive.controls-hidden, .stage.immersive.controls-hidden * { cursor: none; }
+.stage:fullscreen { border: 0; }
+.stage:fullscreen .win-body { height: 100%; }
+
+/* controls never wider than the player; the title in the time row shrinks instead of pushing */
+.controls { min-width: 0; overflow: hidden; }
+.controls .times { gap: 8px; }
+.controls .times > .np { flex: 1; min-width: 0; text-align: center; }
+@media (max-width: 760px) {
+  #role-label { display: none; }
+  .members .member { padding: 1px; max-width: none; }
+  .members .member > .truncate { display: none; }
+  .controls .times > .np { display: none; }
+}
