@@ -45,7 +45,7 @@ Das Script fragt beim Start nach Repo, Domain, Ordner, Port, Dienstname und DNS 
 ## Als Discord Activity einrichten
 
 1. **App anlegen:** https://discord.com/developers/applications → „New Application“. Als App-Icon liegt `.github/logo.png` (1024 px) bereit, für die Activity-Assets `.github/cover.png` (Cover-Artwork) und `.github/background.png` (Hintergrund), beide 1024 × 576.
-2. **OAuth2:** Client ID und Client Secret kopieren → in `.env` eintragen (`DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `VITE_DISCORD_CLIENT_ID`). Eine Redirect-URL ist für Activities nicht nötig.
+2. **OAuth2:** Client ID und Client Secret kopieren → in `.env` eintragen (`DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `VITE_DISCORD_CLIENT_ID`). Unter „Redirects“ den Platzhalter `https://127.0.0.1` eintragen. Activities leiten nie um, aber Discord verlangt beim Token-Tausch den registrierten Wert; der Server schickt standardmäßig genau diesen (`DISCORD_REDIRECT_URI` in der `.env`, falls du etwas anderes einträgst).
 3. **Activities aktivieren:** Reiter „Activities“ → „Enable Activities“.
    Unter „General Information“ außerdem eintragen: Terms of Service URL `https://<deine-domain>/terms`, Privacy Policy URL `https://<deine-domain>/privacy`. Beide Seiten liefert der Server mit (`client/public/terms.html`, `privacy.html`); Besucher ohne Discord sehen unter `/` eine kleine Startseite mit den Links.
 4. **URL Mapping:** unter Activities → „URL Mappings“ den Root `/` auf deine öffentliche Adresse zeigen lassen, z. B. `aniwatch.vensin.dev`. Discord lädt die App über seinen eigenen Proxy, deshalb muss der Server **öffentlich per HTTPS** erreichbar sein. Es werden keine weiteren Mappings gebraucht, alles (Streams, Bilder, Fonts) läuft über unseren Server.

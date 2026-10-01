@@ -163,6 +163,8 @@ if [ ! -f "$ENV_FILE" ]; then
     echo "DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID:-}"
     echo "DISCORD_CLIENT_SECRET=${DISCORD_CLIENT_SECRET:-}"
     echo "VITE_DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID:-}"
+    echo "# Unter OAuth2 -> Redirects genau diesen Wert eintragen (Platzhalter, wird nie aufgerufen)"
+    echo "DISCORD_REDIRECT_URI=https://127.0.0.1"
     echo "# Vercel API token fuer den DNS-Cron (Account Settings -> Tokens)"
     echo "VERCEL_TOKEN=${VERCEL_TOKEN:-}"
     echo "VERCEL_TEAM_ID=${VERCEL_TEAM_ID:-}"

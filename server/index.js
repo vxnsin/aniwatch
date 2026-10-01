@@ -21,6 +21,8 @@ const pkg = require('../package.json');
 const PORT = parseInt(process.env.PORT || '3100', 10);
 const CLIENT_ID = process.env.DISCORD_CLIENT_ID || '';
 const CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET || '';
+// activities never redirect, but discord's token endpoint wants the registered redirect uri in the exchange anyway
+const REDIRECT_URI = process.env.DISCORD_REDIRECT_URI || 'https://127.0.0.1';
 const ALLOW_DEV = process.env.ALLOW_DEV === '1';
 const DIST = path.join(__dirname, '..', 'dist');
 
@@ -51,7 +53,7 @@ app.post('/api/token', wrap(async (req) => {
   const res = await fetch('https://discord.com/api/oauth2/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ client_id: CLIENT_ID, client_secret: CLIENT_SECRET, grant_type: 'authorization_code', code }),
+    body: new URLSearchParams({ client_id: CLIENT_ID, client_secret: CLIENT_SECRET, grant_type: 'authorization_code', code, redirect_uri: REDIRECT_URI }),
   });
   const token = await res.json();
   if (!res.ok || !token.access_token) throw bad(`discord token: ${token.error_description || token.error || res.status}`, 401);
