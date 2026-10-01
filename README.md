@@ -44,7 +44,7 @@ Das Script fragt beim Start nach Repo, Domain, Ordner, Port, Dienstname und DNS 
 
 ## Als Discord Activity einrichten
 
-1. **App anlegen:** https://discord.com/developers/applications → „New Application“. Als App-Icon liegt `.github/logo.png` (1024 px) bereit.
+1. **App anlegen:** https://discord.com/developers/applications → „New Application“. Als App-Icon liegt `.github/logo.png` (1024 px) bereit, für die Activity-Assets `.github/cover.png` (Cover-Artwork) und `.github/background.png` (Hintergrund), beide 1024 × 576.
 2. **OAuth2:** Client ID und Client Secret kopieren → in `.env` eintragen (`DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `VITE_DISCORD_CLIENT_ID`). Eine Redirect-URL ist für Activities nicht nötig.
 3. **Activities aktivieren:** Reiter „Activities“ → „Enable Activities“.
    Unter „General Information“ außerdem eintragen: Terms of Service URL `https://<deine-domain>/terms`, Privacy Policy URL `https://<deine-domain>/privacy`. Beide Seiten liefert der Server mit (`client/public/terms.html`, `privacy.html`); Besucher ohne Discord sehen unter `/` eine kleine Startseite mit den Links.
