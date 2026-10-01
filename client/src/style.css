@@ -245,3 +245,9 @@ body::before { display: none; }
 }
 
 .poster-card .poster .fallback { position: absolute; inset: 0; display: grid; place-items: center; padding: 4px; text-align: center; font-size: 10px; color: var(--ink-soft); }
+
+/* kino-modus: discord's frame has no real fullscreen, so the player takes the whole frame instead */
+body.theater .topbar, body.theater .side { display: none !important; }
+body.theater .layout { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
+body.theater .stage { border-width: 0; }
+.screen .unmute { position: absolute; right: 12px; top: 12px; z-index: 5; }

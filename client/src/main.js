@@ -209,6 +209,38 @@ function fail(reason) {
 }
 
 /** target position right now according to the server */
+let needsUnmute = false;
+const onPlaying = () => { unlocked = true; $('unlock').classList.add('hidden'); };
+/** play(), surviving the two things that go wrong in an embedded frame:
+ *  AbortError (a pause/seek interrupted the start) → try again shortly,
+ *  NotAllowedError (no sound without a click) → play muted, unmute on the next click */
+function startPlay(v, attempt = 0) {
+  v.play().then(onPlaying).catch((err) => {
+    if (err?.name === 'AbortError' && attempt < 3) {
+      setTimeout(() => { if (R?.playback?.playing && v.paused) startPlay(v, attempt + 1); }, 400);
+      return;
+    }
+    if (err?.name === 'NotAllowedError' && !v.muted) {
+      v.muted = true;
+      v.play().then(() => { onPlaying(); needsUnmute = true; showUnmuteHint(); }).catch(() => $('unlock').classList.remove('hidden'));
+      return;
+    }
+    report('play', `${err?.name}: ${err?.message}`);
+    $('unlock').classList.remove('hidden');
+  });
+}
+function showUnmuteHint() {
+  const el = $('unmute');
+  if (el) el.classList.toggle('hidden', !needsUnmute);
+}
+function unmute() {
+  const v = video();
+  v.muted = false;
+  needsUnmute = false;
+  showUnmuteHint();
+  renderControls();
+}
+
 function expected(pb) {
   pb = pb || R?.playback; if (!pb) return 0;
   return pb.playing ? pb.position + (serverNow() - pb.at) / 1000 : pb.position;
@@ -221,7 +253,7 @@ function applyPlayback(pb, force) {
   const target = expected(pb);
   if (force || Math.abs(v.currentTime - target) > 1.2) { suppressEvents = true; try { v.currentTime = Math.max(0, target); } catch {} setTimeout(() => (suppressEvents = false), 300); }
   if (pb.playing) {
-    v.play().then(() => { unlocked = true; $('unlock').classList.add('hidden'); }).catch((err) => { if (err?.name !== 'NotAllowedError') report('play', `${err?.name}: ${err?.message}`); $('unlock').classList.remove('hidden'); });
+    startPlay(v);
   } else {
     v.pause();
   }
@@ -262,7 +294,11 @@ function bindVideo() {
   v.addEventListener('play', () => { if (suppressEvents || !ready || leaving) return; if (isHost() && !R.playback.playing) send({ type: 'play' }); });
   $('screen').addEventListener('click', (e) => {
     if (e.target.closest('button')) return;
+    const v = video();
+    if (needsUnmute) { unmute(); return; }
     if (!unlocked) { unlocked = true; $('unlock').classList.add('hidden'); applyPlayback(R.playback, true); return; }
+    // still starting up: a click means "go", not "pause for everyone"
+    if (R?.playback?.playing && v.paused) { startPlay(v); return; }
     if (canControl()) send({ type: 'toggle' }); else showOverlay();
   });
   $('screen').addEventListener('dblclick', toggleFullscreen);
@@ -272,13 +308,21 @@ function bindVideo() {
     if (e.key === 'ArrowRight' && canControl()) send({ type: 'seek', delta: 10 });
     if (e.key === 'ArrowLeft' && canControl()) send({ type: 'seek', delta: -10 });
     if (e.key === 'f') toggleFullscreen();
+    if (e.key === 'Escape' && document.body.classList.contains('theater')) setTheater(false);
     if (e.key === 'm') { v.muted = !v.muted; renderControls(); }
   });
 }
+function setTheater(on) {
+  document.body.classList.toggle('theater', on);
+  renderControls();
+}
 function toggleFullscreen() {
+  if (document.fullscreenElement) { document.exitFullscreen?.(); return; }
+  if (document.body.classList.contains('theater')) { setTheater(false); return; }
   const el = $('stage');
-  if (document.fullscreenElement) document.exitFullscreen?.();
-  else el.requestFullscreen?.().catch(() => {});
+  const fallback = () => { setTheater(true); toast('kino-modus · esc zum beenden. für mehr platz das activity-fenster in discord ausklappen', 5000); };
+  if (document.fullscreenEnabled && el.requestFullscreen) el.requestFullscreen().catch(fallback);
+  else fallback();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -310,6 +354,7 @@ function renderLayout() {
           </div>
           <div class="overlay hidden-soft" id="overlay"></div>
           <div class="osd" id="osd" style="opacity:0"></div>
+          <button class="btn primary unmute hidden" id="unmute">${icon('mute')} ton an</button>
           <div class="center hidden" id="unlock"><div class="win"><div class="win-body" style="text-align:center"><div class="pixel" style="font-size:16px;margin-bottom:8px">bereit?</div><button class="btn primary big" id="unlock-btn">${icon('play')} mitschauen</button><div class="xs muted" style="margin-top:6px">ein klick, damit der browser ton abspielen darf</div></div></div></div>
         </div>
         <div class="controls" id="controls"></div>
@@ -340,6 +385,7 @@ function renderLayout() {
   </div>`;
   bindVideo();
   bindSearch();
+  $('unmute').addEventListener('click', (e) => { e.stopPropagation(); unmute(); });
   $('unlock-btn').addEventListener('click', (e) => { e.stopPropagation(); unlocked = true; $('unlock').classList.add('hidden'); applyPlayback(R.playback, true); });
   $('side-toggle').addEventListener('click', () => $('side').classList.toggle('open'));
   document.querySelectorAll('.tab[data-tab]').forEach((t) => t.addEventListener('click', () => { tab = t.dataset.tab; document.querySelectorAll('.tab').forEach((x) => x.classList.toggle('active', x === t)); document.querySelectorAll('.panel').forEach((p) => p.classList.toggle('active', p.id === `panel-${tab}`)); }));
@@ -414,7 +460,7 @@ function onControlClick(e) {
     case 'stop': if (confirm('wiedergabe für alle stoppen?')) send({ type: 'stop' }); break;
     case 'lang': send({ type: 'lang', langKey: parseInt(b.dataset.v, 10) }); toast('wechsle sprache …'); break;
     case 'hoster': send({ type: 'hoster', hosterId: b.dataset.v }); toast('wechsle hoster …'); break;
-    case 'mute': v.muted = !v.muted; renderControls(); break;
+    case 'mute': if (needsUnmute) unmute(); else { v.muted = !v.muted; renderControls(); } break;
     case 'resync': applyPlayback(R.playback, true); toast('synchronisiert'); break;
     case 'fs': toggleFullscreen(); break;
   }
