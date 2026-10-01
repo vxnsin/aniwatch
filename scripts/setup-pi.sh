@@ -173,12 +173,12 @@ if [ ! -f "$ENV_FILE" ]; then
 else
   ENV_CREATED=0
   # keep PORT in the env file in sync with the chosen port
-  if grep -q '^PORT=' "$ENV_FILE"; then sed -i "s/^PORT=.*/PORT=$PORT/" "$ENV_FILE"; else echo "PORT=$PORT" >> "$ENV_FILE"; fi
+  if grep -q '^PORT=' "$ENV_FILE"; then sudo sed -i "s/^PORT=.*/PORT=$PORT/" "$ENV_FILE"; else echo "PORT=$PORT" | sudo tee -a "$ENV_FILE" >/dev/null; fi
 fi
 # VITE_DISCORD_CLIENT_ID mirrors DISCORD_CLIENT_ID if only one was filled in
 if grep -q '^DISCORD_CLIENT_ID=.\+' "$ENV_FILE" && grep -q '^VITE_DISCORD_CLIENT_ID=$' "$ENV_FILE"; then
   CID="$(grep '^DISCORD_CLIENT_ID=' "$ENV_FILE" | cut -d= -f2-)"
-  sed -i "s/^VITE_DISCORD_CLIENT_ID=$/VITE_DISCORD_CLIENT_ID=$CID/" "$ENV_FILE"
+  sudo sed -i "s/^VITE_DISCORD_CLIENT_ID=$/VITE_DISCORD_CLIENT_ID=$CID/" "$ENV_FILE"
 fi
 
 # ---------------------------------------------------------------- build
