@@ -137,6 +137,7 @@ app.get('/api/proxy', async (req, res) => {
     if (req.headers.range) headers.Range = req.headers.range;
     const upstream = await request(target, { headers, signal: ac.signal, timeout: 30000 });
     const ct = upstream.headers.get('content-type') || '';
+    if (!upstream.ok && upstream.status !== 206) console.warn(`[Proxy] ${upstream.status} ${target.slice(0, 120)}`);
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Cache-Control', 'no-store');
     const playlist = /mpegurl/i.test(ct) || /\.m3u8(\?|$)/i.test(target) || /master\.txt(\?|$)/i.test(target);
@@ -156,6 +157,7 @@ app.get('/api/proxy', async (req, res) => {
     Readable.fromWeb(upstream.body).on('error', () => res.end()).pipe(res);
   } catch (e) {
     if (ac.signal.aborted) return;
+    console.warn(`[Proxy] ${e.message} ${String(target).slice(0, 120)}`);
     if (!res.headersSent) res.status(502).send(e.message);
   }
 });
@@ -165,11 +167,12 @@ app.get('/api/img', async (req, res) => {
   if (!/^https:\/\/(aniworld\.to|cdn\.discordapp\.com|img-place\.com)\//.test(u)) return res.status(400).end();
   try {
     const up = await request(u, { headers: { Referer: 'https://aniworld.to/', Accept: 'image/*' }, timeout: 15000 });
-    if (!up.ok || !up.body) return res.status(up.status).end();
+    if (!up.ok || !up.body) { console.warn(`[Img] ${up.status} ${u}`); return res.status(up.status).end(); }
     res.setHeader('Content-Type', up.headers.get('content-type') || 'image/jpeg');
     res.setHeader('Cache-Control', 'public, max-age=86400');
     Readable.fromWeb(up.body).on('error', () => res.end()).pipe(res);
-  } catch {
+  } catch (e) {
+    console.warn(`[Img] ${e.message} ${u}`);
     res.status(502).end();
   }
 });
@@ -255,6 +258,7 @@ async function handle(room, user, ws, msg) {
     case 'open_control': host(); room.openControl = !!msg.value; room.broadcast(); room.persist(); break;
     case 'autoplay': control(); room.settings.autoplay = !!msg.value; room.broadcast(); room.persist(); break;
 
+    case 'client_log': console.warn(`[Client ${user.name}] ${String(msg.kind || '').slice(0, 20)}: ${String(msg.text || '').slice(0, 300)}`); break;
     case 'chat': { const text = String(msg.text || '').trim().slice(0, 300); if (text) room.emit('chat', { user: { id: user.id, name: user.name, avatar: user.avatar }, text }); break; }
     default: break;
   }

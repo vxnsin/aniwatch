@@ -71,6 +71,27 @@ const api = async (path, body, method) => {
 };
 const send = (obj) => { if (ws && ws.readyState === 1) ws.send(JSON.stringify(obj)); };
 
+// every client problem ends up in the server log (journalctl -u aniwatch), throttled per message
+const reported = new Set();
+function report(kind, text) {
+  const key = kind + text;
+  if (reported.has(key) || reported.size > 60) return;
+  reported.add(key);
+  console.warn('[aniwatch]', kind, text);
+  send({ type: 'client_log', kind, text });
+}
+window.addEventListener('securitypolicyviolation', (e) => report('csp', `${e.violatedDirective} blocked ${e.blockedURI}`));
+window.addEventListener('error', (e) => {
+  const t = e.target;
+  if (t && t.tagName === 'IMG') {
+    report('img', String(t.currentSrc || t.src).slice(0, 200));
+    const box = t.closest('.poster');
+    if (box && !box.querySelector('.fallback')) { const n = box.closest('[title]')?.getAttribute('title') || ''; box.insertAdjacentHTML('beforeend', `<div class="fallback">${esc(n)}</div>`); }
+    t.remove();
+  } else if (e.message) report('js', `${e.message} @ ${e.filename}:${e.lineno}`);
+}, true);
+window.addEventListener('unhandledrejection', (e) => report('promise', String(e.reason?.message || e.reason)));
+
 // ─────────────────────────────────────────────────────────────────────────────
 // boot
 // ─────────────────────────────────────────────────────────────────────────────
@@ -171,12 +192,12 @@ function startSource(url, type, referer, pb) {
     hls = new Hls({ enableWorker: true, backBufferLength: 60, maxBufferLength: 45, fragLoadingMaxRetry: 4 });
     hls.loadSource(src); hls.attachMedia(v);
     hls.on(Hls.Events.MANIFEST_PARSED, onReady);
-    hls.on(Hls.Events.ERROR, (_, d) => { if (!d.fatal) return; if (d.type === Hls.ErrorTypes.MEDIA_ERROR && ready) return hls.recoverMediaError(); fail(d.details); });
+    hls.on(Hls.Events.ERROR, (_, d) => { report(d.fatal ? 'hls-fatal' : 'hls', `${d.type}/${d.details} ${d.response?.code || ''} ${(d.url || d.frag?.url || '').slice(0, 120)}`); if (!d.fatal) return; if (d.type === Hls.ErrorTypes.MEDIA_ERROR && ready) return hls.recoverMediaError(); fail(d.details); });
   } else {
     v.src = src;
     v.addEventListener('loadedmetadata', onReady, { once: true });
   }
-  v.onerror = () => fail(v.error ? `media ${v.error.code}` : 'media');
+  v.onerror = () => { report('video', v.error ? `code ${v.error.code} ${v.error.message || ''}` : 'unknown'); fail(v.error ? `media ${v.error.code}` : 'media'); };
 }
 
 function fail(reason) {
@@ -200,7 +221,7 @@ function applyPlayback(pb, force) {
   const target = expected(pb);
   if (force || Math.abs(v.currentTime - target) > 1.2) { suppressEvents = true; try { v.currentTime = Math.max(0, target); } catch {} setTimeout(() => (suppressEvents = false), 300); }
   if (pb.playing) {
-    v.play().then(() => { unlocked = true; $('unlock').classList.add('hidden'); }).catch(() => { $('unlock').classList.remove('hidden'); });
+    v.play().then(() => { unlocked = true; $('unlock').classList.add('hidden'); }).catch((err) => { if (err?.name !== 'NotAllowedError') report('play', `${err?.name}: ${err?.message}`); $('unlock').classList.remove('hidden'); });
   } else {
     v.pause();
   }
@@ -479,7 +500,7 @@ async function loadProfile() {
 }
 function renderProfileBox() {
   const name = me()?.aniworld || '';
-  const card = (a, badge) => `<li class="poster-card" data-slug="${esc(a.slug)}" ${a.href && /staffel|filme/.test(a.href) ? `data-season="${esc(a.href.match(/^(\/anime\/stream\/[^/]+\/(?:staffel-\d+|filme))/)?.[1] || '')}"` : ''} title="${esc(a.title)}"><div class="poster">${a.cover ? `<img src="${img(a.cover)}" alt="" loading="lazy">` : ''}${badge ? `<span class="badge">${esc(badge)}</span>` : ''}</div><div class="name">${esc(a.title)}</div></li>`;
+  const card = (a, badge) => `<li class="poster-card" data-slug="${esc(a.slug)}" ${a.href && /staffel|filme/.test(a.href) ? `data-season="${esc(a.href.match(/^(\/anime\/stream\/[^/]+\/(?:staffel-\d+|filme))/)?.[1] || '')}"` : ''} title="${esc(a.title)}"><div class="poster">${a.cover ? `<img src="${img(a.cover)}" alt="">` : ''}${badge ? `<span class="badge">${esc(badge)}</span>` : ''}</div><div class="name">${esc(a.title)}</div></li>`;
   $('profile-view').innerHTML = `
     <div class="win win-dashed"><div class="win-title"><span class="dots"><i></i><i></i><i></i></span><span class="title">mein aniworld-profil</span><span class="right">${P?.episodes ? `${P.episodes} folgen` : ''}</span></div>
     <div class="win-body"><form class="row" id="profile-form"><input class="input" id="profile-name" placeholder="aniworld-name (optional)" value="${esc(name)}" autocapitalize="none" spellcheck="false"><button class="btn" type="submit">ok</button></form>

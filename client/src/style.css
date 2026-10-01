@@ -227,3 +227,21 @@ button.chip.active::before { content: "▸ "; }
   .controls .vol { display: none; }
 }
 @media (min-width: 761px) { .side-toggle { display: none; } }
+
+/* ---------- edge to edge: inside discord the ui fills the whole frame, no background shows ---------- */
+body { background: var(--paper); }
+body::before { display: none; }
+.layout { padding: 0; gap: 0; background: var(--paper); }
+.layout > .win, .stage, .side .win { box-shadow: none; }
+.topbar { border-width: 0 0 1.5px 0; }
+.stage { border-width: 0 1.5px 0 0; }
+.side { background: var(--paper-2); }
+.side .tabs { padding: 6px 8px 0; background: var(--paper-2); }
+.side .win { border-width: 1.5px 0 0 0; }
+.boot { background: var(--paper); }
+@media (max-width: 760px) {
+  .stage { border-width: 0; }
+  .side .win { border-width: 1.5px; box-shadow: var(--shadow); }
+}
+
+.poster-card .poster .fallback { position: absolute; inset: 0; display: grid; place-items: center; padding: 4px; text-align: center; font-size: 10px; color: var(--ink-soft); }
