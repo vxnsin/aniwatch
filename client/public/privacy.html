@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>aniwatch · datenschutz</title>
+  <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/legal.css" />
+</head>
+<body>
+  <div class="page">
+    <header>
+      <a class="wordmark" href="/">ani<span>watch</span></a>
+      <div class="sub">datenschutzerklärung · stand 1. oktober 2026</div>
+    </header>
+
+    <div class="win">
+      <div class="win-title"><span class="dots"><i></i><i></i><i></i></span>kurzfassung</div>
+      <div class="win-body">
+        <p>aniwatch ist ein privates, nicht kommerzielles Hobbyprojekt: eine Discord-Activity, mit der man Anime gemeinsam im Sprachkanal schaut. Es gibt keine Werbung, kein Tracking, keine Analyse-Dienste und keine Weitergabe von Daten an Dritte zu eigenen Zwecken. Gespeichert wird nur, was die App zum Funktionieren braucht: deine Discord-ID mit Anzeigename und Avatar, optional ein von dir eingetragener AniWorld-Name sowie der Zustand des Raums (Warteschlange, laufende Folge, Position).</p>
+      </div>
+    </div>
+
+    <div class="win">
+      <div class="win-title"><span class="dots"><i></i><i></i><i></i></span>im detail</div>
+      <div class="win-body">
+        <h2>1. Verantwortlicher</h2>
+        <p>Verantwortlich im Sinne der DSGVO ist der Betreiber von vensin.dev. Name und Kontaktdaten findest du im <a href="https://vensin.dev/impressum" target="_blank" rel="noreferrer">Impressum</a>; Anfragen zum Datenschutz gern über das <a href="https://vensin.dev/contact" target="_blank" rel="noreferrer">Kontaktformular</a> oder per Discord.</p>
+
+        <h2>2. Welche Daten verarbeitet werden</h2>
+        <table>
+          <tr><th>Daten</th><th>Woher</th><th>Wozu</th><th>Wie lange</th></tr>
+          <tr><td>Discord-Nutzer-ID, Anzeigename, Avatar-URL</td><td>von Discord beim Start der Activity (OAuth2, Berechtigung „identify“)</td><td>dich im Raum anzeigen, Host-Rolle und Warteschlangen-Einträge zuordnen</td><td>bis du die Löschung verlangst</td></tr>
+          <tr><td>Sitzungs-Token</td><td>vom Server erzeugt</td><td>deine Verbindung zum Raum absichern</td><td>30 Tage</td></tr>
+          <tr><td>AniWorld-Benutzername</td><td>nur, wenn du ihn selbst einträgst</td><td>dein öffentliches AniWorld-Profil (Watchlist, Abos, zuletzt gesehen) im Suchbereich anzeigen</td><td>bis du ihn löschst oder leerst</td></tr>
+          <tr><td>Raumzustand: Warteschlange (mit Name der Person, die eingereiht hat), laufende Folge, Abspielposition, Einstellungen</td><td>aus der Nutzung</td><td>Synchronisation aller Teilnehmer, Weiterschauen nach Neustart</td><td>14 Tage nach der letzten Aktivität</td></tr>
+          <tr><td>Chat-Nachrichten</td><td>aus der Nutzung</td><td>Anzeige im Raum</td><td>nur im Arbeitsspeicher, max. 50 Nachrichten, weg beim Neustart des Servers</td></tr>
+          <tr><td>Verbindungsprotokolle (Anzeigename, Raum-ID, Zeitpunkt)</td><td>Server-Log</td><td>Fehlersuche</td><td>Standard-Aufbewahrung des System-Journals, in der Regel wenige Wochen</td></tr>
+        </table>
+        <p class="xs muted" style="margin-top:8px">Das Discord-Zugriffstoken wird nur einmal benutzt, um dein Profil bei Discord abzufragen, und nicht gespeichert. Deine IP-Adresse wird vom Server nicht gespeichert.</p>
+
+        <h2>3. Rechtsgrundlage</h2>
+        <p>Die Verarbeitung ist zur Bereitstellung der App erforderlich (Art. 6 Abs. 1 lit. b DSGVO). Der freiwillig eingetragene AniWorld-Name beruht auf deiner Einwilligung (Art. 6 Abs. 1 lit. a DSGVO), die du jederzeit durch Leeren des Felds widerrufen kannst. Server-Logs dienen dem berechtigten Interesse an einem stabilen Betrieb (Art. 6 Abs. 1 lit. f DSGVO).</p>
+
+        <h2>4. Cookies und lokaler Speicher</h2>
+        <p>Es werden keine Cookies gesetzt. Im lokalen Speicher deines Browsers merkt sich die App nur die Lautstärke und im Entwicklungsmodus einen Anzeigenamen.</p>
+
+        <h2>5. Externe Dienste</h2>
+        <ul>
+          <li><strong>Discord:</strong> Die App läuft innerhalb von Discord und wird über den Discord-Proxy geladen. Für Discord gilt die <a href="https://discord.com/privacy" target="_blank" rel="noreferrer">Datenschutzerklärung von Discord</a>.</li>
+          <li><strong>aniworld.to und Video-Hoster</strong> (z. B. VOE, Vidmoly, Filemoon): Der aniwatch-Server ruft Seiten, Cover-Bilder und Videodaten dort ab und reicht sie an die Teilnehmer durch. Dabei sieht der jeweilige Anbieter die IP-Adresse des aniwatch-Servers, nicht deine. Ausnahme: Läuft ein Hoster nur als eingebetteter Rahmen (derzeit Doodstream), lädt dein Browser die Inhalte direkt von diesem Anbieter, der dann deine IP-Adresse erhält. Die App weist in diesem Fall darauf hin.</li>
+          <li><strong>AniWorld-Profil:</strong> Wenn du deinen AniWorld-Namen einträgst, ruft der Server dein dort öffentlich einsehbares Profil ab. Es werden keine Daten an AniWorld übermittelt.</li>
+        </ul>
+
+        <h2>6. Hosting</h2>
+        <p>Der Server steht in Deutschland und wird privat betrieben. Die Verbindung ist TLS-verschlüsselt.</p>
+
+        <h2>7. Deine Rechte</h2>
+        <p>Du hast das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch (Art. 15 bis 21 DSGVO) sowie das Recht, dich bei einer Aufsichtsbehörde zu beschweren. Für die Löschung aller zu deiner Discord-ID gespeicherten Daten genügt eine kurze Nachricht über die oben genannten Kontaktwege.</p>
+
+        <h2>8. Änderungen</h2>
+        <p>Diese Erklärung wird angepasst, wenn sich die App ändert. Die jeweils aktuelle Fassung steht unter dieser Adresse.</p>
+      </div>
+    </div>
+
+    <div class="row" style="justify-content:center">
+      <a class="btn" href="/terms">nutzungsbedingungen</a>
+      <a class="btn" href="https://github.com/vxnsin/aniwatch" target="_blank" rel="noreferrer">quellcode</a>
+      <a class="btn" href="https://vensin.dev/impressum" target="_blank" rel="noreferrer">impressum</a>
+    </div>
+    <footer>aniwatch · ein projekt von <a href="https://vensin.dev" target="_blank" rel="noreferrer">vensin</a></footer>
+  </div>
+</body>
+</html>

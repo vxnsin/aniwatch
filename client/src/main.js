@@ -76,6 +76,18 @@ const send = (obj) => { if (ws && ws.readyState === 1) ws.send(JSON.stringify(ob
 // ─────────────────────────────────────────────────────────────────────────────
 (async () => {
   sprite();
+  // a normal browser visit (not inside discord, dev mode off): show a small landing page instead of an error
+  if (!insideDiscord()) {
+    const info = await fetch('/api/info').then((r) => r.json()).catch(() => ({}));
+    if (!info.dev) {
+      $('boot').innerHTML = `<div class="wordmark">ani<span>watch</span></div>
+        <div class="muted" style="max-width:460px">anime zusammen schauen – als discord activity direkt im sprachkanal. host steuert, alle reihen ein, autoplay läuft weiter.</div>
+        <div class="muted xs" style="max-width:460px">in discord: sprachkanal betreten → aktivitäten (rakete) → aniwatch.</div>
+        <div class="row" style="justify-content:center;margin-top:6px"><a class="btn" href="/terms">nutzungsbedingungen</a><a class="btn" href="/privacy">datenschutz</a><a class="btn" href="https://github.com/vxnsin/aniwatch" target="_blank" rel="noreferrer">github</a></div>
+        <div class="muted xs">ein projekt von <a href="https://vensin.dev" target="_blank" rel="noreferrer">vensin</a></div>`;
+      return;
+    }
+  }
   try {
     conn = await connect((s) => { $('boot-text').innerHTML = `<span class="blink accent">▮</span> ${esc(s)}`; });
   } catch (e) {

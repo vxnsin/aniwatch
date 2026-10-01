@@ -270,7 +270,7 @@ process.on('uncaughtException', (e) => console.error('[Uncaught]', e?.stack || e
 // Static client (vite build → dist)
 // ─────────────────────────────────────────────────────────────────────────────
 if (fs.existsSync(DIST)) {
-  app.use(express.static(DIST, { index: false }));
+  app.use(express.static(DIST, { index: false, extensions: ['html'] }));
   app.get(/^\/(?!api\/|ws).*/, (_req, res) => res.sendFile(path.join(DIST, 'index.html')));
 } else {
   app.get('/', (_req, res) => res.type('text').send('kein build gefunden – `npm run build` ausführen oder `npm run dev:client` nutzen'));
