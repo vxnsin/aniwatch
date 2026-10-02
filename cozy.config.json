@@ -1,0 +1,11 @@
+{
+  "theme": "spring",
+  "repo": "vxnsin/aniwatch",
+  "cards": [
+    { "type": "repo", "link": "https://github.com/vxnsin/aniwatch" },
+    { "type": "button", "id": "nav-setup", "label": "einrichten →", "link": "https://github.com/vxnsin/aniwatch#einrichten" },
+    { "type": "button", "id": "nav-aniplay", "label": "aniplay", "link": "https://github.com/vxnsin/aniplay" },
+    { "type": "commits", "link": "https://github.com/vxnsin/aniwatch/commits" },
+    { "type": "contributors", "link": "https://github.com/vxnsin/aniwatch/graphs/contributors" }
+  ]
+}

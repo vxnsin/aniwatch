@@ -152,7 +152,7 @@ if [ ! -f "$ENV_FILE" ]; then
   ask DISCORD_CLIENT_ID "Discord Client ID" ""
   ask_secret DISCORD_CLIENT_SECRET "Discord Client Secret"
   if yesno "$SETUP_DDNS"; then
-    ask_secret VERCEL_TOKEN "Vercel API Token fuer DNS (leer, wenn /etc/vensin.env schon einen hat)"
+    ask_secret VERCEL_TOKEN "Vercel API Token fuer DNS (leer lassen, wenn eine andere /etc/*.env schon einen hat)"
     ask VERCEL_TEAM_ID "Vercel Team ID (nur bei Team-Domain, sonst leer)" ""
   fi
   {
@@ -240,11 +240,11 @@ if yesno "$SETUP_DDNS"; then
   sudo tee "$DDNS_BIN" >/dev/null <<'DDNS'
 #!/bin/bash
 # Keeps the A-record for __DOMAIN__ at Vercel DNS pointed at the current public IP.
-# Token: VERCEL_TOKEN from __ENV_FILE__, otherwise from /etc/vensin.env (same account).
+# Token: VERCEL_TOKEN from __ENV_FILE__, otherwise the first other /etc/*.env that has one (same Vercel account).
 set -e
 [ -f "__ENV_FILE__" ] && source "__ENV_FILE__"
-if [ -z "${VERCEL_TOKEN:-}" ] && [ -f /etc/vensin.env ]; then source /etc/vensin.env; fi
-[ -n "${VERCEL_TOKEN:-}" ] || { echo "VERCEL_TOKEN fehlt (in __ENV_FILE__ oder /etc/vensin.env)"; exit 0; }
+if [ -z "${VERCEL_TOKEN:-}" ]; then for f in /etc/*.env; do grep -qs "^VERCEL_TOKEN=." "$f" && { VERCEL_TOKEN="$(grep "^VERCEL_TOKEN=" "$f" | cut -d= -f2-)"; VERCEL_TEAM_ID="${VERCEL_TEAM_ID:-$(grep -s "^VERCEL_TEAM_ID=" "$f" | cut -d= -f2-)}"; break; }; done; fi
+[ -n "${VERCEL_TOKEN:-}" ] || { echo "VERCEL_TOKEN fehlt (in __ENV_FILE__ oder einer anderen /etc/*.env)"; exit 0; }
 FQDN="__DOMAIN__"
 ROOT="$(echo "$FQDN" | awk -F. '{print $(NF-1)"."$NF}')"
 NAME="${FQDN%.$ROOT}"; [ "$NAME" = "$FQDN" ] && NAME=""
