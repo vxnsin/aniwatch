@@ -278,3 +278,12 @@ body.theater .stage { border-width: 0; }
   .members .member > .truncate { display: none; }
   .controls .times > .np { display: none; }
 }
+
+/* loading: three pixel blocks bouncing, same look as the rest */
+.screen .loader { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 4; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 14px 20px; background: rgba(23, 18, 28, 0.82); border: 1.5px solid var(--line); box-shadow: var(--shadow); font-family: var(--font-pixel); font-size: 13px; color: var(--ink); pointer-events: none; }
+.screen .loader .px { display: flex; gap: 6px; height: 22px; align-items: flex-end; }
+.screen .loader .px i { width: 10px; height: 10px; background: var(--accent); animation: px-bounce 0.9s steps(3) infinite; }
+.screen .loader .px i:nth-child(2) { background: var(--accent-2); animation-delay: 0.15s; }
+.screen .loader .px i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes px-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+@media (prefers-reduced-motion: reduce) { .screen .loader .px i { animation: none; } }

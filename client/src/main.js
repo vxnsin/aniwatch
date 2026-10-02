@@ -155,6 +155,7 @@ let triedAlt = false, errorSent = false, ready = false;
 
 function unload() {
   ready = false; currentKey = null;
+  setLoading(false);
   if (hls) { hls.destroy(); hls = null; }
   const v = video(); if (v) { v.pause(); v.removeAttribute('src'); v.load(); }
   const f = $('frame'); if (f) { f.src = 'about:blank'; f.classList.add('hidden'); }
@@ -169,11 +170,14 @@ function loadStream(current, pb) {
   if (hls) { hls.destroy(); hls = null; }
   ready = false; triedAlt = false; errorSent = false;
   currentKey = s.url;
+  lastShownPlaying = null;
   $('idle').classList.add('hidden');
+  setLoading(true, `lade ${epLabel(current.episode)} …`);
   const v = video(), f = $('frame');
   if (s.streamType === 'embed') {
     v.classList.add('hidden'); f.classList.remove('hidden');
     f.src = s.embedUrl;
+    f.onload = () => setLoading(false);
     toast('dieser hoster läuft nur als iframe – keine synchronisation möglich', 5000);
     return;
   }
@@ -204,6 +208,7 @@ function fail(reason) {
   const s = R?.current?.stream;
   if (s?.altUrl && !triedAlt) { triedAlt = true; toast('hls hakt – probiere mp4 …'); if (hls) { hls.destroy(); hls = null; } ready = false; startSource(s.altUrl, s.altType || 'mp4', s.referer, R.playback); return; }
   if (errorSent) return; errorSent = true;
+  setLoading(isHost(), 'hoster spielt nicht – suche einen anderen …');
   if (isHost()) send({ type: 'player_error', message: reason });
   else toast('bei dir spielt dieser hoster nicht – der host kann oben den hoster wechseln', 5000);
 }
@@ -232,6 +237,7 @@ function startPlay(v, attempt = 0) {
       return;
     }
     report('play', `${err?.name}: ${err?.message}`);
+    setLoading(false);
     $('unlock').classList.remove('hidden');
   });
 }
@@ -297,7 +303,8 @@ function applyPlayback(pb, force) {
   } else {
     v.pause();
   }
-  osd(pb.playing ? 'play' : 'pause');
+  if (!force && lastShownPlaying !== null && lastShownPlaying !== pb.playing) osd(pb.playing ? 'play' : 'pause');
+  lastShownPlaying = pb.playing;
 }
 
 // drift correction + host reports
@@ -316,6 +323,17 @@ setInterval(() => {
   renderTimes();
 }, 2000);
 
+let loaderTimer = null;
+/** spinner on the picture; small delay so short buffering blips don't flash it */
+function setLoading(on, text) {
+  const el = $('loader'); if (!el) return;
+  clearTimeout(loaderTimer);
+  if (!on) { el.classList.add('hidden'); return; }
+  if (text) $('loader-text').textContent = text;
+  loaderTimer = setTimeout(() => el.classList.remove('hidden'), 250);
+}
+let lastShownPlaying = null;
+
 let osdTimer;
 function osd(name, text) {
   const el = $('osd'); if (!el) return;
@@ -329,8 +347,15 @@ function bindVideo() {
   const v = video();
   v.addEventListener('ended', () => sendEnded());
   v.addEventListener('timeupdate', renderTimes);
-  v.addEventListener('playing', () => { updateToggleIcon(); pokeControls(); });
-  v.addEventListener('pause', () => { updateToggleIcon(); showControls(); });
+  v.addEventListener('playing', () => { setLoading(false); updateToggleIcon(); pokeControls(); });
+  v.addEventListener('pause', () => { updateToggleIcon(); showControls(); if (!R?.playback?.playing) setLoading(false); });
+  // buffering while the room plays
+  const buffering = () => { if (ready && R?.playback?.playing) setLoading(true, 'puffert …'); };
+  v.addEventListener('waiting', buffering);
+  v.addEventListener('stalled', buffering);
+  v.addEventListener('seeking', buffering);
+  v.addEventListener('seeked', () => { if (!v.paused && v.readyState >= 3) setLoading(false); });
+  v.addEventListener('canplay', () => { if (!v.paused || !R?.playback?.playing) setLoading(false); });
   $('stage').addEventListener('mousemove', () => pokeControls());
   $('stage').addEventListener('touchstart', () => pokeControls(), { passive: true });
   // a host pausing via keyboard/media keys should pause everyone
@@ -440,6 +465,7 @@ function renderLayout() {
           </div>
           <div class="overlay hidden-soft" id="overlay"></div>
           <div class="osd" id="osd" style="opacity:0"></div>
+          <div class="loader hidden" id="loader"><span class="px"><i></i><i></i><i></i></span><span id="loader-text">lädt …</span></div>
           <button class="btn primary unmute hidden" id="unmute">${icon('mute')} ton an</button>
           <div class="center hidden" id="unlock"><div class="win"><div class="win-body" style="text-align:center"><div class="pixel" style="font-size:16px;margin-bottom:8px">bereit?</div><button class="btn primary big" id="unlock-btn">${icon('play')} mitschauen</button><div class="xs muted" style="margin-top:6px">ein klick, damit der browser ton abspielen darf</div></div></div></div>
         </div>
@@ -489,6 +515,7 @@ function renderAll() {
   $('idle-hint').textContent = canControl() ? 'such rechts einen anime und drück ▶' : 'der host sucht gerade was aus. du kannst schon mal was in die warteschlange legen.';
   $('q-count').textContent = R.queue.length ? R.queue.length : '';
   $('p-count').textContent = R.members.length;
+  if (R.busy) setLoading(true, R.busy); else if (!R.current && !currentKey) setLoading(false);
   const c = R.current;
   $('overlay').innerHTML = c ? `<div class="t1 truncate">${esc(c.anime.title)}</div><div class="truncate">${esc(epLabel(c.episode))} · ${esc(c.episode.title)}</div><div class="xs muted">${esc(c.stream?.hosterName || '')} · ${esc(c.stream?.langLabel || '')}</div>` : '';
   renderControls();
