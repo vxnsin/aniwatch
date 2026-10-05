@@ -158,6 +158,8 @@ if [ ! -f "$ENV_FILE" ]; then
   {
     echo "NODE_ENV=production"
     echo "PORT=$PORT"
+    echo "# Name beim warden (https://github.com/vxnsin/warden), falls einer auf dem Rechner laeuft"
+    echo "WARDEN_NAME=$SERVICE"
     echo "ALLOW_DEV=0"
     echo "# Discord Developer Portal -> deine App -> OAuth2"
     echo "DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID:-}"
@@ -176,6 +178,7 @@ else
   ENV_CREATED=0
   # keep PORT in the env file in sync with the chosen port
   if grep -q '^PORT=' "$ENV_FILE"; then sudo sed -i "s/^PORT=.*/PORT=$PORT/" "$ENV_FILE"; else echo "PORT=$PORT" | sudo tee -a "$ENV_FILE" >/dev/null; fi
+  if grep -q '^WARDEN_NAME=' "$ENV_FILE"; then sudo sed -i "s/^WARDEN_NAME=.*/WARDEN_NAME=$SERVICE/" "$ENV_FILE"; else echo "WARDEN_NAME=$SERVICE" | sudo tee -a "$ENV_FILE" >/dev/null; fi
 fi
 # VITE_DISCORD_CLIENT_ID mirrors DISCORD_CLIENT_ID if only one was filled in
 if grep -q '^DISCORD_CLIENT_ID=.\+' "$ENV_FILE" && grep -q '^VITE_DISCORD_CLIENT_ID=$' "$ENV_FILE"; then

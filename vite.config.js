@@ -1,10 +1,12 @@
 import { defineConfig, loadEnv } from 'vite';
+import warden from './server/warden.js';
 
 // Client lives in /client, builds to /dist (served by the express server).
 // `npm run dev:client` starts vite with a proxy to the express server for /api and /ws.
-export default defineConfig(({ mode }) => {
+export default defineConfig(async ({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  const port = env.PORT || 3100;
+  // the server's port: the one a warden handed it, when one did, otherwise PORT
+  const port = (await warden.lookupPort({ name: 'aniwatch', env })) || env.PORT || 3100;
   return {
     root: 'client',
     envDir: '..',

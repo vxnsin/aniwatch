@@ -99,12 +99,24 @@ Fehler aus dem Client, etwa blockierte Bilder, Player- oder HLS-Fehler, landen i
 journalctl -u aniwatch -f
 ```
 
+## Port vom warden
+
+Läuft auf dem Rechner ein [warden](https://github.com/vxnsin/warden), fragt aniwatch ihn beim Start nach seinem Port, statt einfach `PORT` zu nehmen. `PORT` ist dann der Wunsch: Ist er frei, bleibt es dabei, sonst vergibt der warden einen anderen, und aniwatch sagt beim Start, welchen. Derselbe Name bekommt bei jedem Start denselben Port, `warden ls` zeigt, wer ihn hält, und beim Beenden wird er zurückgegeben. `npm run dev:client` fragt den warden ebenfalls und zeigt mit dem Proxy auf den Port, den der Server bekommen hat. Ohne warden ändert sich nichts. `warden run -- npm start` geht genauso, dann hält der warden den Port für den Prozess.
+
+| variable | standard | |
+|---|---|---|
+| `WARDEN_URL` | `http://127.0.0.1:7010` | Adresse des warden |
+| `WARDEN_NAME` | `aniwatch` | Name, unter dem sich aniwatch anmeldet; das Setup-Script trägt den Dienstnamen ein |
+| `WARDEN_TOKEN` | leer | Token, falls der warden eines verlangt |
+| `WARDEN` | leer | `0` fragt den warden gar nicht erst |
+
 ## Aufbau
 
 ```
 server/index.js    Express, Discord-Login, WebSocket pro Raum, Stream- und Bild-Proxy
 server/rooms.js    Raum: Host, Warteschlange, Sync, Autoplay, Hoster-Fallback
 server/db.js       SQLite (node:sqlite): Nutzer, Sessions, Raumzustand, Fortschritt
+server/warden.js   Port vom warden, falls einer läuft
 lib/               aniworld-Scraper und ein Loader pro Hoster
 client/            Vite-App: discord.js (SDK), main.js (UI und Player), style.css
 client/public/     Fonts, Icon, Nutzungsbedingungen, Datenschutz

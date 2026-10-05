@@ -15,10 +15,11 @@ const WebSocket = require('ws');
 const aw = require('../lib/aniworld');
 const { UA, request } = require('../lib/http');
 const db = require('./db');
+const warden = require('./warden');
 const { getRoom } = require('./rooms');
 const pkg = require('../package.json');
 
-const PORT = parseInt(process.env.PORT || '3100', 10);
+let PORT = parseInt(process.env.PORT || '3100', 10);
 const CLIENT_ID = process.env.DISCORD_CLIENT_ID || '';
 const CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET || '';
 // activities never redirect, but discord's token endpoint wants the registered redirect uri in the exchange anyway
@@ -282,7 +283,12 @@ if (fs.existsSync(DIST)) {
   app.get('/', (_req, res) => res.type('text').send('kein build gefunden – `npm run build` ausführen oder `npm run dev:client` nutzen'));
 }
 
-server.listen(PORT, () => {
-  console.log(`\n  aniwatch v${pkg.version} läuft auf http://localhost:${PORT}`);
-  console.log(`  discord client id: ${CLIENT_ID || '(fehlt – .env ausfüllen)'} · dev mode: ${ALLOW_DEV ? 'an' : 'aus'}\n`);
+// a warden on this machine hands out the port; without one PORT is used as it is
+warden.claimPort({ name: pkg.name, preferred: process.env.PORT ? PORT : null, fallback: PORT, meta: { version: pkg.version } }).then(({ port, warden: w }) => {
+  PORT = port;
+  server.listen(PORT, () => {
+    console.log(`\n  aniwatch v${pkg.version} läuft auf http://localhost:${PORT}`);
+    if (w) console.log(`  port ${PORT} von warden (${w.name}${w.wrapped ? ', warden run' : ''})`);
+    console.log(`  discord client id: ${CLIENT_ID || '(fehlt – .env ausfüllen)'} · dev mode: ${ALLOW_DEV ? 'an' : 'aus'}\n`);
+  });
 });
