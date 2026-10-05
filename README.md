@@ -14,6 +14,8 @@
 </div>
 <!-- /cozy:cards -->
 
+[![supports warden](https://raw.githubusercontent.com/vxnsin/warden/main/assets/supports-warden.svg)](https://github.com/vxnsin/warden)
+
 Anime zusammen schauen, direkt im Discord-Sprachkanal. aniwatch ist eine **Discord Activity**: Einer startet sie und ist Host, alle anderen schauen synchron mit, reihen Folgen ein und quatschen nebenbei. Die Folgen kommen von aniworld.to.
 
 <p align="center"><img src=".github/screenshot.jpg" width="800" alt="aniwatch: player links, suche mit aniworld-profil rechts"></p>
