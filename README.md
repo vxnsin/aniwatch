@@ -3,9 +3,9 @@
 <!-- cozy:cards -->
 <div align="center">
 
-<a href="https://github.com/vxnsin/aniwatch"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/vxnsin/aniwatch/output/repo-dark.svg?v=79e9d06ff5"><img src="https://raw.githubusercontent.com/vxnsin/aniwatch/output/repo-light.svg?v=79e9d06ff5" width="840" alt="vxnsin/aniwatch: Anime zusammen schauen als Discord Activity – Host steuert, alle reihen ein, Autoplay. Streams von aniworld.to."></picture></a>
+<a href="https://github.com/vxnsin/aniwatch"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/vxnsin/aniwatch/output/repo-dark.svg?v=79e9d06ff5"><img src="https://raw.githubusercontent.com/vxnsin/aniwatch/output/repo-light.svg?v=79e9d06ff5" width="840" alt="vxnsin/aniwatch: Watch anime together as a Discord Activity – the host controls playback, everyone can queue episodes, autoplay included. Streams from aniworld.to."></picture></a>
 
-<a href="https://github.com/vxnsin/aniwatch#einrichten"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/vxnsin/aniwatch/output/nav-setup-dark.svg?v=ecdb5ba37c"><img src="https://raw.githubusercontent.com/vxnsin/aniwatch/output/nav-setup-light.svg?v=ecdb5ba37c" width="115" alt="einrichten →"></picture></a><a href="https://github.com/vxnsin/aniplay"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/vxnsin/aniwatch/output/nav-aniplay-dark.svg?v=5ea8f2880f"><img src="https://raw.githubusercontent.com/vxnsin/aniwatch/output/nav-aniplay-light.svg?v=5ea8f2880f" width="76" alt="aniplay"></picture></a>
+<a href="https://github.com/vxnsin/aniwatch#setup"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/vxnsin/aniwatch/output/nav-setup-dark.svg?v=ecdb5ba37c"><img src="https://raw.githubusercontent.com/vxnsin/aniwatch/output/nav-setup-light.svg?v=ecdb5ba37c" width="115" alt="set up →"></picture></a><a href="https://github.com/vxnsin/aniplay"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/vxnsin/aniwatch/output/nav-aniplay-dark.svg?v=5ea8f2880f"><img src="https://raw.githubusercontent.com/vxnsin/aniwatch/output/nav-aniplay-light.svg?v=5ea8f2880f" width="76" alt="aniplay"></picture></a>
 
 <a href="https://github.com/vxnsin/aniwatch/commits"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/vxnsin/aniwatch/output/commits-dark.svg?v=d469be00f6"><img src="https://raw.githubusercontent.com/vxnsin/aniwatch/output/commits-light.svg?v=d469be00f6" width="840" alt="latest commits of vxnsin/aniwatch"></picture></a>
 
@@ -16,75 +16,75 @@
 
 [![supports warden](https://raw.githubusercontent.com/vxnsin/warden/main/assets/supports-warden.svg)](https://github.com/vxnsin/warden)
 
-Anime zusammen schauen, direkt im Discord-Sprachkanal. aniwatch ist eine **Discord Activity**: Einer startet sie und ist Host, alle anderen schauen synchron mit, reihen Folgen ein und quatschen nebenbei. Die Folgen kommen von aniworld.to.
+Watch anime together, right inside a Discord voice channel. aniwatch is a **Discord Activity**: whoever launches it becomes the host, everyone else watches in sync, queues up episodes and chats along. Episodes come from aniworld.to.
 
-<p align="center"><img src=".github/screenshot.jpg" width="800" alt="aniwatch: player links, suche mit aniworld-profil rechts"></p>
+<p align="center"><img src=".github/screenshot.jpg" width="800" alt="aniwatch: player on the left, search with aniworld profile on the right"></p>
 
-## Was es kann
+## Features
 
-- **Host-Rolle:** Wer die Activity zuerst öffnet, ist Host und steuert: Folge starten, Pause, spulen, Sprache, Hoster, nächste Folge. Der Host kann die Rolle abgeben oder „alle dürfen steuern“ einschalten. Lädt der Host kurz neu, bleibt die Rolle 25 Sekunden für ihn reserviert.
-- **Alle synchron:** Der Server führt die Uhr, jeder Client gleicht kleine Abweichungen über die Abspielgeschwindigkeit aus und springt bei großen. Wer später dazukommt, landet direkt an der richtigen Stelle.
-- **Warteschlange:** Jeder darf Folgen oder ganze Staffeln einreihen und eigene Einträge entfernen. Ist die Schlange leer, läuft mit Autoplay die nächste Folge weiter, auch über Staffelgrenzen.
-- **Suche mit Autocomplete** beim Tippen, oder einfach einen aniworld-Link einfügen.
-- **AniWorld-Profil pro Person**, optional: zuletzt geschaut, Watchlist und Abos als Schnellauswahl, gesehene Folgen bekommen einen Haken.
-- **Vollbild** mit einer Leiste, die ein- und ausfährt. Erlaubt Discord kein echtes Vollbild, füllt der Player das ganze Activity-Fenster.
-- **Ladeanzeige**, automatischer **Hoster-Wechsel**, wenn ein Stream nicht spielt, und stummer Autostart mit „ton an“-Knopf, wenn der Browser ohne Klick keinen Ton erlaubt.
-- Discord-Profile aller Anwesenden oben in der Leiste, der Host mit Krone. Rich Presence „schaut Solo Leveling · S1E01“.
-- Chat im Raum. Raum, Warteschlange und Fortschritt überleben einen Server-Neustart (SQLite).
+- **Host role:** Whoever opens the Activity first is the host and controls playback: start an episode, pause, seek, language, hoster, next episode. The host can hand the role over or turn on "everyone can control". If the host briefly reloads, the role stays reserved for them for 25 seconds.
+- **Everyone in sync:** The server keeps the clock. Each client evens out small drift by adjusting playback speed and jumps on larger gaps. Late joiners land at the right spot straight away.
+- **Queue:** Anyone can queue episodes or whole seasons and remove their own entries. When the queue is empty, autoplay continues with the next episode, even across seasons.
+- **Search with autocomplete** as you type, or just paste an aniworld link.
+- **AniWorld profile per person**, optional: recently watched, watchlist and subscriptions as quick picks, watched episodes get a checkmark.
+- **Fullscreen** with a control bar that slides in and out. If Discord doesn't allow real fullscreen, the player fills the whole Activity window.
+- **Loading indicator**, automatic **hoster switching** when a stream won't play, and muted autostart with an "unmute" button when the browser blocks sound without a click.
+- Discord avatars of everyone present in the top bar, the host with a crown. Rich Presence shows "watching Solo Leveling · S1E01".
+- In-room chat. Room, queue and progress survive a server restart (SQLite).
 
-## Bedienung
+## Controls
 
-| wer | darf |
+| who | can |
 |---|---|
-| Host | Folge starten, Play/Pause, spulen, Sprache und Hoster, nächste Folge, Stop, Warteschlange sortieren und leeren, Host abgeben, „alle dürfen steuern“ |
-| alle | suchen, einreihen, eigene Einträge entfernen, Lautstärke, Vollbild, neu synchronisieren, Chat, eigenes AniWorld-Profil |
+| host | start an episode, play/pause, seek, language and hoster, next episode, stop, reorder and clear the queue, hand over host, "everyone can control" |
+| everyone | search, queue, remove own entries, volume, fullscreen, resync, chat, own AniWorld profile |
 
-Tastatur: `Space` Play/Pause, `←` `→` ±10 Sekunden, `f` Vollbild, `m` stumm, `Esc` Vollbild beenden.
+Keyboard: `Space` play/pause, `←` `→` ±10 seconds, `f` fullscreen, `m` mute, `Esc` exit fullscreen.
 
-## Einrichten
+## Setup
 
-Du brauchst eine Discord-App, einen Rechner, der dauerhaft läuft (ein Raspberry Pi reicht), und eine Domain, die per HTTPS auf diesen Rechner zeigt. Discord lädt Activities nur über eine feste HTTPS-Adresse.
+You need a Discord app, a machine that runs permanently (a Raspberry Pi is enough), and a domain that points to that machine over HTTPS. Discord only loads Activities from a fixed HTTPS address.
 
-### 1. Discord-App anlegen
+### 1. Create the Discord app
 
-1. Auf https://discord.com/developers/applications eine neue App anlegen. Als Icon passt [`.github/logo.png`](.github/logo.png).
-2. **OAuth2:** Client ID und Client Secret notieren. Unter „Redirects“ den Platzhalter `https://127.0.0.1` eintragen. Activities leiten nie um, Discord verlangt beim Login aber einen registrierten Wert.
-3. **Activities → URL-Zuordnungen:** Präfix `/`, Ziel deine Domain ohne `https://`, zum Beispiel `aniwatch.example.org`. Weitere Zuordnungen braucht es nicht, Streams, Bilder und Fonts laufen alle über den eigenen Server.
-4. **Activities → Einstellungen:** Activities aktivieren, Web, iOS und Android anhaken.
-5. **General Information:** Terms of Service `https://<deine-domain>/terms`, Privacy Policy `https://<deine-domain>/privacy`. Beide Seiten liefert der Server mit.
-6. Solange die App nicht veröffentlicht ist, sehen sie nur Leute, die unter „App Testers“ eingetragen sind.
+1. Create a new app at https://discord.com/developers/applications. [`.github/logo.png`](.github/logo.png) works as the icon.
+2. **OAuth2:** Note the Client ID and Client Secret. Under "Redirects", add the placeholder `https://127.0.0.1`. Activities never redirect, but Discord requires a registered value for login.
+3. **Activities → URL Mappings:** Prefix `/`, target your domain without `https://`, for example `aniwatch.example.org`. No other mappings are needed; streams, images and fonts all go through your own server.
+4. **Activities → Settings:** Enable Activities and tick Web, iOS and Android.
+5. **General Information:** Terms of Service `https://<your-domain>/terms`, Privacy Policy `https://<your-domain>/privacy`. The server ships both pages.
+6. As long as the app isn't published, only people listed under "App Testers" can see it.
 
-Für die Activity-Assets liegen [`.github/cover.png`](.github/cover.png) und [`.github/background.png`](.github/background.png) bereit, beide 1024 × 576.
+For the Activity assets, [`.github/cover.png`](.github/cover.png) and [`.github/background.png`](.github/background.png) are ready to use, both 1024 × 576.
 
-### 2. Server einrichten
+### 2. Set up the server
 
-Auf einem Raspberry Pi oder einem anderen Debian-Rechner:
+On a Raspberry Pi or another Debian machine:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/vxnsin/aniwatch/main/scripts/setup-pi.sh | bash
 ```
 
-Das Script fragt nach Repo, Domain, Ordner, Port, Dienstname und ob der DNS-Eintrag bei Vercel automatisch auf deine Heim-IP gesetzt werden soll. Enter übernimmt jeweils den Vorschlag. Danach erledigt es:
+The script asks for the repo, domain, folder, port, service name, and whether the DNS record at Vercel should automatically point to your home IP. Enter accepts the suggested value each time. It then:
 
-- Node 22.13 oder neuer und [Caddy](https://caddyserver.com) installieren, falls sie fehlen
-- die App klonen und bauen, die Daten nach `/var/lib/aniwatch` legen
-- einen systemd-Dienst `aniwatch` anlegen, der beim Booten startet
-- einen eigenen Caddy-Block mit automatischem HTTPS-Zertifikat anlegen, ohne andere Seiten auf demselben Rechner anzufassen
-- optional einen Cron-Job, der den A-Record bei Vercel aktuell hält
+- installs Node 22.13 or newer and [Caddy](https://caddyserver.com) if they're missing
+- clones and builds the app, and puts the data in `/var/lib/aniwatch`
+- creates a systemd service `aniwatch` that starts on boot
+- adds its own Caddy block with an automatic HTTPS certificate, without touching other sites on the same machine
+- optionally adds a cron job that keeps the A record at Vercel up to date
 
-Beim ersten Lauf fragt es nach der Discord Client ID und dem Secret und schreibt beides nach `/etc/aniwatch.env`. Updates später: das Script einfach erneut starten, es zieht die neue Version, baut und startet neu. Ohne Fragen geht es auch:
+On the first run it asks for the Discord Client ID and Secret and writes both to `/etc/aniwatch.env`. To update later, just run the script again: it pulls the new version, builds and restarts. It also works without prompts:
 
 ```bash
 DOMAIN=aniwatch.example.org bash ~/aniwatch/scripts/setup-pi.sh --yes
 ```
 
-Im Router müssen die Ports 80 und 443 auf den Rechner zeigen. Test von außen: `https://<deine-domain>/api/info` liefert JSON.
+Ports 80 and 443 must be forwarded to the machine in your router. Test from outside: `https://<your-domain>/api/info` returns JSON.
 
-### 3. Starten
+### 3. Launch
 
-In Discord einen Sprachkanal betreten, unten auf das Raketen-Symbol „Aktivitäten“, dort steht aniwatch. Wer sie startet, ist Host.
+In Discord, join a voice channel, click the rocket icon "Activities" at the bottom, and aniwatch is listed there. Whoever launches it is the host.
 
-## Lokal entwickeln
+## Local development
 
 ```bash
 npm install
@@ -93,58 +93,58 @@ npm run build
 npm start
 ```
 
-In der `.env` steht `ALLOW_DEV=1`, dann geht es ohne Discord im Browser: `http://localhost:3100/?dev=1&name=luis&room=test`, in einem zweiten Tab mit `name=mia`. Für Änderungen am Client `npm run dev:client` (Vite mit Proxy auf den Server). In der Browser-Konsole liegt `aniwatch.state` zum Nachschauen.
+The `.env` contains `ALLOW_DEV=1`, which lets it run in the browser without Discord: `http://localhost:3100/?dev=1&name=luis&room=test`, and in a second tab with `name=mia`. For client changes use `npm run dev:client` (Vite with a proxy to the server). `aniwatch.state` is available in the browser console for inspection.
 
-Fehler aus dem Client, etwa blockierte Bilder, Player- oder HLS-Fehler, landen im Server-Log:
+Client errors, such as blocked images or player and HLS errors, end up in the server log:
 
 ```bash
 journalctl -u aniwatch -f
 ```
 
-## Port vom warden
+## Port from warden
 
-Läuft auf dem Rechner ein [warden](https://github.com/vxnsin/warden), fragt aniwatch ihn beim Start nach seinem Port, statt einfach `PORT` zu nehmen. `PORT` ist dann der Wunsch: Ist er frei, bleibt es dabei, sonst vergibt der warden einen anderen, und aniwatch sagt beim Start, welchen. Derselbe Name bekommt bei jedem Start denselben Port, `warden ls` zeigt, wer ihn hält, und beim Beenden wird er zurückgegeben. `npm run dev:client` fragt den warden ebenfalls und zeigt mit dem Proxy auf den Port, den der Server bekommen hat. Ohne warden ändert sich nichts. `warden run -- npm start` geht genauso, dann hält der warden den Port für den Prozess.
+If a [warden](https://github.com/vxnsin/warden) is running on the machine, aniwatch asks it for a port on startup instead of just taking `PORT`. `PORT` then becomes the preferred port: if it's free, it's used, otherwise warden assigns a different one and aniwatch tells you which on startup. The same name gets the same port on every start, `warden ls` shows who holds it, and it's released on shutdown. `npm run dev:client` asks warden as well and points its proxy at the port the server got. Without warden nothing changes. `warden run -- npm start` works too; warden then holds the port for the process.
 
-| variable | standard | |
+| variable | default | |
 |---|---|---|
-| `WARDEN_URL` | `http://127.0.0.1:7010` | Adresse des warden |
-| `WARDEN_NAME` | `aniwatch` | Name, unter dem sich aniwatch anmeldet; das Setup-Script trägt den Dienstnamen ein |
-| `WARDEN_TOKEN` | leer | Token, falls der warden eines verlangt |
-| `WARDEN` | leer | `0` fragt den warden gar nicht erst |
+| `WARDEN_URL` | `http://127.0.0.1:7010` | address of warden |
+| `WARDEN_NAME` | `aniwatch` | name aniwatch registers under; the setup script fills in the service name |
+| `WARDEN_TOKEN` | empty | token, if warden requires one |
+| `WARDEN` | empty | `0` skips asking warden entirely |
 
-## Aufbau
+## Structure
 
 ```
-server/index.js    Express, Discord-Login, WebSocket pro Raum, Stream- und Bild-Proxy
-server/rooms.js    Raum: Host, Warteschlange, Sync, Autoplay, Hoster-Fallback
-server/db.js       SQLite (node:sqlite): Nutzer, Sessions, Raumzustand, Fortschritt
-server/warden.js   Port vom warden, falls einer läuft
-lib/               aniworld-Scraper und ein Loader pro Hoster
-client/            Vite-App: discord.js (SDK), main.js (UI und Player), style.css
-client/public/     Fonts, Icon, Nutzungsbedingungen, Datenschutz
-scripts/setup-pi.sh  Einrichtung auf einem Pi oder Server
+server/index.js    Express, Discord login, WebSocket per room, stream and image proxy
+server/rooms.js    Room: host, queue, sync, autoplay, hoster fallback
+server/db.js       SQLite (node:sqlite): users, sessions, room state, progress
+server/warden.js   Port from warden, if one is running
+lib/               aniworld scraper and one loader per hoster
+client/            Vite app: discord.js (SDK), main.js (UI and player), style.css
+client/public/     Fonts, icon, terms of service, privacy policy
+scripts/setup-pi.sh  Setup on a Pi or server
 ```
 
-Streams laufen über `/api/proxy`, damit Referer und User-Agent der Hoster stimmen. Innerhalb von Discord ist nur die eigene Adresse erreichbar, deshalb sind Fonts lokal und Cover über `/api/img` durchgereicht.
+Streams go through `/api/proxy` so the referer and user agent match what the hosters expect. Inside Discord only your own address is reachable, which is why fonts are local and covers are passed through `/api/img`.
 
-## Hoster
+## Hosters
 
-| hoster | modus |
+| hoster | mode |
 |---|---|
-| VOE | HLS, MP4 als Ersatz |
+| VOE | HLS, MP4 as fallback |
 | Vidmoly | HLS |
-| Filemoon | HLS, auf manchen Domains nur als Iframe |
+| Filemoon | HLS, iframe only on some domains |
 | Vidoza, Streamtape | MP4 |
-| Doodstream | nur Iframe, dann ohne Synchronisation |
+| Doodstream | iframe only, so no sync |
 
-Neuer Hoster: eine Datei in `lib/loaders/` mit `name`, `matches(url)` und `resolve(url)`, sie wird automatisch geladen.
+New hoster: add a file in `lib/loaders/` with `name`, `matches(url)` and `resolve(url)`; it's loaded automatically.
 
-## Hinweise
+## Notes
 
-- Wer aniwatch selbst betreibt, passt `client/public/terms.html` und `client/public/privacy.html` an sich als Betreiber an.
-- Die Inhalte kommen von aniworld.to und den jeweiligen Hostern, aniwatch speichert keine Videos. Ob das Ansehen bei dir erlaubt ist, liegt in deiner Verantwortung.
-- Schwesterprojekt für das Wohnzimmer, TV als Player und Handy als Fernbedienung: [aniplay](https://github.com/vxnsin/aniplay).
+- If you host aniwatch yourself, adapt `client/public/terms.html` and `client/public/privacy.html` to you as the operator.
+- Content comes from aniworld.to and the respective hosters; aniwatch doesn't store any videos. Whether watching is legal where you are is your responsibility.
+- Sister project for the living room, with the TV as player and the phone as remote: [aniplay](https://github.com/vxnsin/aniplay).
 
-## Lizenz
+## License
 
 MIT
