@@ -21,6 +21,7 @@ questions:
   - id: port
     prompt: Which port should the server listen on?
     type: port
+    warden: true
     default: 3100
   - id: discord_client_id
     prompt: Discord client id (Developer Portal, OAuth2)
@@ -37,8 +38,6 @@ config:
     VITE_DISCORD_CLIENT_ID: "{{ .discord_client_id }}"
     DISCORD_REDIRECT_URI: https://127.0.0.1
     ALLOW_DEV: "0"
-    # werft owns the port, so warden is not asked
-    WARDEN: "0"
 
 # rooms and profiles (sqlite)
 shared: [data]
