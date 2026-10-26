@@ -3,13 +3,13 @@
 <!-- cozy:cards -->
 <div align="center">
 
-<a href="https://github.com/vxnsin/aniwatch"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/vxnsin/aniwatch/output/repo-dark.svg?v=75af6e8733"><img src="https://raw.githubusercontent.com/vxnsin/aniwatch/output/repo-light.svg?v=75af6e8733" width="840" alt="vxnsin/aniwatch: Watch anime together as a Discord Activity – the host controls playback, everyone can queue episodes, autoplay included. Streams from aniworld.to."></picture></a>
+<a href="https://github.com/vxnsin/aniwatch"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/vxnsin/aniwatch/output/repo-dark.svg?v=91650f2f54"><img src="https://raw.githubusercontent.com/vxnsin/aniwatch/output/repo-light.svg?v=91650f2f54" width="840" alt="vxnsin/aniwatch: Watch anime together as a Discord Activity – the host controls playback, everyone can queue episodes, autoplay included. Streams from aniworld.to."></picture></a>
 
 <a href="https://github.com/vxnsin/aniwatch#setup"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/vxnsin/aniwatch/output/nav-setup-dark.svg?v=e5aa186d8e"><img src="https://raw.githubusercontent.com/vxnsin/aniwatch/output/nav-setup-light.svg?v=e5aa186d8e" width="89" alt="set up →"></picture></a><a href="https://github.com/vxnsin/aniplay"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/vxnsin/aniwatch/output/nav-aniplay-dark.svg?v=5ea8f2880f"><img src="https://raw.githubusercontent.com/vxnsin/aniwatch/output/nav-aniplay-light.svg?v=5ea8f2880f" width="76" alt="aniplay"></picture></a>
 
-<a href="https://github.com/vxnsin/aniwatch/commits"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/vxnsin/aniwatch/output/commits-dark.svg?v=079d7c19a9"><img src="https://raw.githubusercontent.com/vxnsin/aniwatch/output/commits-light.svg?v=079d7c19a9" width="840" alt="latest commits of vxnsin/aniwatch"></picture></a>
+<a href="https://github.com/vxnsin/aniwatch/commits"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/vxnsin/aniwatch/output/commits-dark.svg?v=8b2f670af5"><img src="https://raw.githubusercontent.com/vxnsin/aniwatch/output/commits-light.svg?v=8b2f670af5" width="840" alt="latest commits of vxnsin/aniwatch"></picture></a>
 
-<a href="https://github.com/vxnsin/aniwatch/graphs/contributors"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/vxnsin/aniwatch/output/contributors-dark.svg?v=fd618d41c2"><img src="https://raw.githubusercontent.com/vxnsin/aniwatch/output/contributors-light.svg?v=fd618d41c2" width="840" alt="contributors: vxnsin"></picture></a>
+<a href="https://github.com/vxnsin/aniwatch/graphs/contributors"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/vxnsin/aniwatch/output/contributors-dark.svg?v=34adcef328"><img src="https://raw.githubusercontent.com/vxnsin/aniwatch/output/contributors-light.svg?v=34adcef328" width="840" alt="contributors: vxnsin"></picture></a>
 
 </div>
 <!-- /cozy:cards -->
