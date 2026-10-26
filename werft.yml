@@ -1,0 +1,64 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/vxnsin/werft/main/schema/werft.schema.json
+#
+# Install and update with werft (https://github.com/vxnsin/werft):
+#   sudo werft install https://github.com/vxnsin/aniwatch
+# werft builds the client and runs the server as a systemd service. The HTTPS
+# address Discord needs (Caddy, DNS) is not part of this; scripts/setup-pi.sh
+# still covers it.
+schema: 1
+name: aniwatch
+description: aniwatch, watch anime together as a Discord Activity
+
+source:
+  channel: branch
+  branch: main
+
+requires:
+  os: [debian>=12, ubuntu>=22.04]
+  commands: [node>=22.13, npm]
+
+questions:
+  - id: port
+    prompt: Which port should the server listen on?
+    type: port
+    default: 3100
+  - id: discord_client_id
+    prompt: Discord client id (Developer Portal, OAuth2)
+    validate: '^[0-9]+$'
+  - id: discord_client_secret
+    prompt: Discord client secret
+    type: password
+
+config:
+  env_file: /etc/aniwatch/.env
+  env:
+    NODE_ENV: production
+    # the client is built with the id baked in
+    VITE_DISCORD_CLIENT_ID: "{{ .discord_client_id }}"
+    DISCORD_REDIRECT_URI: https://127.0.0.1
+    ALLOW_DEV: "0"
+    # werft owns the port, so warden is not asked
+    WARDEN: "0"
+
+# rooms and profiles (sqlite)
+shared: [data]
+
+install:
+  - npm ci --no-audit --no-fund
+  - name: vite build
+    run: npm run build
+
+update:
+  backup:
+    paths: ["{{ .werft_shared }}/data"]
+
+runtime:
+  type: systemd
+  systemd:
+    exec: node server/index.js
+    user: aniwatch
+    restart: always
+
+health:
+  http: http://localhost:{{ .port }}/api/info
+  timeout: 30s

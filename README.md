@@ -80,6 +80,14 @@ DOMAIN=aniwatch.example.org bash ~/aniwatch/scripts/setup-pi.sh --yes
 
 Ports 80 and 443 must be forwarded to the machine in your router. Test from outside: `https://<your-domain>/api/info` returns JSON.
 
+If [werft](https://github.com/vxnsin/werft) is on the machine, it can take over the app part instead, so a later `werft update aniwatch` pulls, builds and restarts:
+
+```bash
+sudo werft install https://github.com/vxnsin/aniwatch
+```
+
+Caddy and the DNS record still come from the script above.
+
 ### 3. Launch
 
 In Discord, join a voice channel, click the rocket icon "Activities" at the bottom, and aniwatch is listed there. Whoever launches it is the host.
